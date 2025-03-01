@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Retro 3D Game - Alien 1</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      /* Ocupamos toda la ventana y dejamos barras negras si sobra espacio */
+      width: 100%; height: 100%;
+      background-color: black;
+      overflow: hidden;
+    }
+    #crosshair {
+      position: absolute; top: 50%; left: 50%;
+      width: 20px; height: 20px;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    }
+    .crosshairH, .crosshairV {
+      position: absolute;
+      background-color: white;
+    }
+    .crosshairH {
+      top: 50%; left: 0;
+      width: 20px; height: 2px;
+      transform: translateY(-50%);
+    }
+    .crosshairV {
+      left: 50%; top: 0;
+      width: 2px; height: 20px;
+      transform: translateX(-50%);
+    }
+    #fpsCounter {
+      position: absolute; top: 10px; right: 10px;
+      color: white; font-size: 20px; font-family: Arial, sans-serif;
+      background-color: rgba(0,0,0,0.5);
+      padding: 5px 10px; border-radius: 5px;
+      z-index: 9999;
+    }
+    #weaponInfo {
+      position: absolute; bottom: 10px; left: 10px;
+      color: white; font-size: 20px; font-family: Arial, sans-serif;
+      background-color: rgba(0,0,0,0.5);
+      padding: 5px 10px; border-radius: 5px;
+      z-index: 9999;
+    }
+    #playerHealthBar {
+      position: absolute; top: 10px; left: 50%;
+      transform: translateX(-50%);
+      width: 300px; height: 20px;
+      border: 2px solid #fff;
+      background-color: #000;
+      z-index: 9999;
+    }
+    #playerHealthFill {
+      width: 100%; height: 100%;
+      background-color: #0f0;
+      transition: width 0.2s ease;
+    }
+    #damageOverlay {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: red; opacity: 0;
+      pointer-events: none; transition: opacity 0.2s ease;
+      z-index: 10000;
+    }
+    #gameOverMessage {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: white; font-size: 40px; font-family: Arial, sans-serif;
+      background-color: rgba(0,0,0,0.7);
+      padding: 20px; border-radius: 10px;
+      z-index: 10001; display: none;
+    }
+    #readyMessage {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: white; font-size: 40px; font-family: Arial, sans-serif;
+      background-color: rgba(0,0,0,0.7); 
+      padding: 20px; border-radius: 10px;
+      z-index: 10002; display: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HUD -->
+<div id="crosshair">
+  <div class="crosshairH"></div>
+  <div class="crosshairV"></div>
+</div>
+<div id="fpsCounter">FPS: 0</div>
+<div id="weaponInfo">Sin arma</div>
+<div id="playerHealthBar">
+  <div id="playerHealthFill"></div>
+</div>
+<div id="damageOverlay"></div>
+<div id="gameOverMessage">GAME OVER</div>
+<div id="readyMessage">Ready?</div>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js';
+
+/* ----------------------------------------------------------------
+   Ajustes principales para una resolución fija de 640×480
+   ---------------------------------------------------------------- */
+const renderer = new THREE.WebGLRenderer({ antialias: false });
+renderer.setSize(640, 480);  // Sin forzar 'false' en el tercer parámetro
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+/* Evita redimensionar el canvas en window.resize
+   (Si lo deseas, puedes comentar la siguiente línea) */
+// window.addEventListener('resize', () => {
+//   // NO hacemos nada o lo dejas vacío
+// });
+
+/* Ajusta el estilo para que se mantenga la relación 4:3 con barras negras */
+renderer.domElement.style.position = 'absolute';
+renderer.domElement.style.top = '0';
+renderer.domElement.style.left = '0';
+renderer.domElement.style.objectFit = 'contain';  // En vez de fill
+renderer.domElement.style.width = '100%';
+renderer.domElement.style.height = '100%';
+renderer.domElement.style.imageRendering = 'pixelated';
+
+document.body.appendChild(renderer.domElement);
+
+/* ----------------------------------------------------------------
+   El resto del código se mantiene igual
+   (creación de escena, cámara, objetos, etc.)
+   ---------------------------------------------------------------- */
+
+// Asegúrate de NO cambiar la cámara en un resize; mantén aspect=640/480
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000080);
+
+const camera = new THREE.PerspectiveCamera(75, 640/480, 0.1, 1000);
+camera.position.set(0, 1.5, 5);
+camera.rotation.order = 'YXZ';
+
+// ... Resto de tu juego (luces, pirámides, targets, etc.) ...
+
+// Ejemplo mínimo para que veas que no se vuelve a redimensionar
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+
+</script>
+</body>
+</html>
